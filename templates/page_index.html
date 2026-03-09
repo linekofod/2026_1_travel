@@ -1,0 +1,14 @@
+{% include "_header.html" %}
+<main>
+  <h1>Welcome {{ user.user_first_name }}!</h1>
+  <h2>Travel destinations</h2>
+  <div class="column_gap">
+    {% if not travels %}
+    <p>You don't have any travels registered</p>
+    <a href="/create-travel">Create a new travel</a>
+    {% endif %}
+  </div>
+  <div class="travel_destinations">{% include "___travel_card.html" %}</div>
+</main>
+
+{% include "_footer.html" %}

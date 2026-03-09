@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/app.css" />
+    <script src="/static/dist/app.js" defer></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <title>{{ title }}</title>
+  </head>
+  <body>
+    <div id="tooltip"></div>
+    {% if not hide_nav %}
+    <header>
+      <nav>
+        <div>
+          <a href="/">Home</a>
+          <a href="/create-travel">Create a new travel</a>
+        </div>
+        <div>
+          {% if not user %}
+          <a href="/login">Login</a>
+          {% else %}
+          <a href="/logout">Logout</a>
+          {% endif %}
+        </div>
+      </nav>
+    </header>
+    {% endif %}
+  </body>
+</html>
