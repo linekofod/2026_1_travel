@@ -1,9 +1,5 @@
 {% for travel in travels %}
 <div class="travel" id="travel-{{ travel.travel_pk }}">
-  <h2>{{ travel.travel_location }}</h2>
-  <p>{{ travel.travel_description }}</p>
-  <p>Arrival date: {{ travel.travel_arrival_date }}</p>
-  <p>Departure date: {{ travel.travel_departure_date }}</p>
   <div class="delete_container">
     <button
       class="delete_button"
@@ -12,6 +8,16 @@
       <i class="fa fa-trash" style="pointer-events: none"></i>
     </button>
     <p class="delete_message hidden">Delete</p>
+  </div>
+  <div>
+    <h2>{{ travel.travel_location }}</h2>
+    <h3>{{ travel.travel_title }}</h3>
+    <p>{{ travel.travel_description }}</p>
+  </div>
+  <div>
+    <p>Arrival date: {{ travel.travel_arrival_date }}</p>
+    <p>Departure date: {{ travel.travel_departure_date }}</p>
+    <a href="/update-travel/{{ travel.travel_pk }}">Edit</a>
   </div>
 </div>
 {% endfor %}

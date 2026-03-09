@@ -214,6 +214,7 @@ def api_create_travel():
     try:
         user = session.get("user", "")
         travel_location = request.form.get("travel_location", "")
+        travel_title = request.form.get("travel_title", "")
         travel_description = request.form.get("travel_description", "")
         travel_arrival_date = request.form.get("travel_arrival_date", "")
         travel_departure_date = request.form.get("travel_departure_date", "")
@@ -226,8 +227,8 @@ def api_create_travel():
             ___tip = render_template("___tip.html", status="error", message=error_message)
             return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
 
-        q = "INSERT INTO travel_destinations VALUES (%s, %s, %s, %s, %s, %s)"
-        cursor.execute(q, (travel_pk, travel_location, travel_description, travel_arrival_date, travel_departure_date, user["user_pk"]))
+        q = "INSERT INTO travel_destinations VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        cursor.execute(q, (travel_pk, travel_location, travel_title, travel_description, travel_arrival_date, travel_departure_date, user["user_pk"]))
         db.commit()
 
         form_travel = render_template("___form_travel.html", x=x)
@@ -281,6 +282,135 @@ def api_delete_travel(travel_pk):
     except Exception as ex:
         ic(ex)
         return str(ex)
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
+
+
+############################## SHOW UPDATE TRAVEL PAGE
+@app.get("/update-travel/<travel_pk>")
+@x.no_cache
+def show_update_travel(travel_pk):
+    try:
+        user = session.get("user", "")
+        db, cursor = x.db()
+        q = "SELECT * FROM travel_destinations WHERE travel_pk = %s"
+        cursor.execute(q, (travel_pk,))
+        travel = cursor.fetchone()
+        return render_template("page_update_travel.html", user=user, x=x, travel=travel, title="Update travel destination")
+    except Exception as ex:
+        ic(ex)
+        return "ups"
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
+
+
+############################## UPDATING A USER
+@app.patch("/api-update-travel/<travel_pk>")
+def api_update_travel(travel_pk):
+    try:
+        parts = []
+        values = []
+
+        travel_title = request.form.get("travel_title", "").strip()
+        if travel_title:
+            parts.append("travel_title = %s")
+            values.append(travel_title)
+
+        travel_description = request.form.get("travel_description", "").strip()
+        if travel_description:
+            parts.append("travel_description = %s")
+            values.append(travel_description)
+
+        travel_location = request.form.get("travel_location", "").strip()
+        if travel_location:
+            parts.append("travel_location = %s")
+            values.append(travel_location)
+
+        travel_arrival_date = request.form.get("travel_arrival_date", "").strip()
+        if travel_arrival_date:
+            parts.append("travel_arrival_date = %s")
+            values.append(travel_arrival_date)
+
+        travel_departure_date = request.form.get("travel_departure_date", "").strip()
+        if travel_departure_date:
+            parts.append("travel_departure_date = %s")
+            values.append(travel_departure_date)
+
+        if not parts: return "nothing to update", 400
+
+        values.append(travel_pk)
+
+        partial_query = ", ".join(parts)
+
+        q = f"UPDATE travel_destinations SET {partial_query} WHERE travel_pk = %s"
+
+        db, cursor = x.db()
+        cursor.execute(q, values)
+        db.commit()
+
+        return f"""
+        <browser mix-redirect="/"></browser>
+        """
+
+    except Exception as ex:
+        print(ex)
+        return str(ex), 500
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
+
+
+############################## UPDATING A USER (DISPLAYING THE USER IN THE #RIGHT COLUMN)
+@app.patch("/users/<user_pk>")
+def update_user(user_pk):
+    try:
+        parts = []
+        values = []
+
+        # Validate user_name
+        user_name = request.form.get("user_name", "") # If the username is not being passed, it returns nothing
+        user_name = user_name.strip()
+        
+        if user_name:
+            parts.append("user_name = %s")
+            values.append(user_name)
+
+        # Validate user_last_name
+        user_last_name = request.form.get("user_last_name", "")
+        user_last_name = user_last_name.strip()
+       
+        if user_last_name:
+            parts.append("user_last_name = %s")
+            values.append(user_last_name)
+        
+        if not user_name and not user_last_name: return "nothing to update", 400
+        
+        # Convert the list to a string with a comma in between
+        partial_query = ",".join(parts)
+
+        values.append(user_pk)
+
+        print(parts, flush=True)
+        print(values, flush=True)
+        print(partial_query, flush=True)
+
+        q = f"""
+            UPDATE users
+            SET {partial_query}
+            WHERE user_pk = %s
+        """
+
+        print(q, flush=True)
+
+        db, cursor = x.db()
+        cursor.execute(q, values)
+        db.commit()
+
+    except Exception as ex:
+        print(ex)
+        return str(ex), 500
     finally:
         if "cursor" in locals(): cursor.close()
         if "db" in locals(): db.close()

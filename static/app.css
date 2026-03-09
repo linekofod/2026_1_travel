@@ -88,6 +88,10 @@ form {
         }
     }
 
+    select {
+        padding: .2rem;
+    }
+
     div {
         display: flex;
         flex-direction: column;
@@ -104,6 +108,7 @@ form {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 1rem;
+    position: relative;
 
     .travel {
         position: relative;
@@ -111,9 +116,17 @@ form {
         padding: 1rem;
         display: flex;
         flex-direction: column;
-        gap: .5rem;
+        gap: 1.5rem;
+        justify-content: space-between;
+
+        div {
+            display: flex;
+            flex-direction: column;
+            gap: .4rem;
+        }
     }
 }
+
 
 .delete_container {
     position: absolute;
