@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "ES5", // Den JavaScript-version TS kompilerer til
+    // "module": "CommonJS", // Modul-systemet (bruges af Node.js)
+    "module": "esnext",
+    "sourceMap": true, // Genererer .map filer til debugging
+    "rootDir": "./static", // Hvor dine TypeScript-filer ligger
+    "outDir": "./static/dist" // Hvor de kompilerede JavaScript-filer gemmes
+  }
+}
