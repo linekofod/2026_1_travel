@@ -2,6 +2,7 @@ from flask import request, make_response
 import mysql.connector
 import re # Regular expressions also called Regex
 from functools import wraps
+from datetime import datetime
 
 ############################## CONNECTION TO THE DATABASE
 # Creates and returns a connection to the database.
@@ -106,3 +107,38 @@ COUNTRIES = [
     "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela", "Vietnam",
     "Yemen", "Zambia", "Zimbabwe"
 ]
+
+############################## VALIDATING TRAVEL LOCATION
+TRAVEL_LOCATION_MIN = 2
+TRAVEL_LOCATION_MAX = 50
+REGEX_TRAVEL_LOCATION = f"^.{{{TRAVEL_LOCATION_MIN},{TRAVEL_LOCATION_MAX}}}$"
+def validate_travel_location():
+    travel_location = request.form.get("travel_location", "").strip()
+    if not re.match(REGEX_TRAVEL_LOCATION, travel_location):
+        raise Exception("company_exception travel_location")
+    return travel_location
+
+############################## VALIDATING TRAVEL TITLE
+TRAVEL_TITLE_MIN = 2
+TRAVEL_TITLE_MAX = 50
+REGEX_TRAVEL_TITLE = f"^.{{{TRAVEL_TITLE_MIN},{TRAVEL_TITLE_MAX}}}$"
+def validate_travel_title():
+    travel_title = request.form.get("travel_title", "").strip()
+    if not re.match(REGEX_TRAVEL_TITLE, travel_title):
+        raise Exception("company_exception travel_title")
+    return travel_title
+
+############################## VALIDATING TRAVEL DATES
+def validate_travel_dates():
+    travel_arrival_date = request.form.get("travel_arrival_date", "")
+    travel_departure_date = request.form.get("travel_departure_date", "")
+    
+    if not travel_arrival_date: raise Exception("company_exception travel_arrival_date")
+    if not travel_departure_date: raise Exception("company_exception travel_departure_date")
+    
+    arrival = datetime.strptime(travel_arrival_date, "%Y-%m-%d")
+    departure = datetime.strptime(travel_departure_date, "%Y-%m-%d")
+    
+    if departure < arrival: raise Exception("company_exception travel_departure_before_arrival")
+    
+    return travel_arrival_date, travel_departure_date

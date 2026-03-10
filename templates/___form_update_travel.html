@@ -1,0 +1,65 @@
+<form mix-patch="/api-update-travel/{{ travel.travel_pk }}">
+  <div>
+    <label for="travel_country">Country*</label>
+    <select name="travel_country">
+      {% for country in x.COUNTRIES %}
+      <option
+        value="{{ country }}"
+        {%
+        if
+        country
+        is
+        equalto
+        travel.travel_country
+        %}selected{%
+        endif
+        %}
+      >
+        {{ country }}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+  <div>
+    <label for="travel_location">Location*</label>
+    <input
+      name="travel_location"
+      type="text"
+      value="{{ travel.travel_location if travel.travel_location else '' }}"
+      placeholder="Location"
+    />
+  </div>
+  <div>
+    <label for="travel_title">Give your trip a title*</label>
+    <input
+      name="travel_title"
+      type="text"
+      value="{{ travel.travel_title if travel.travel_title else '' }}"
+      placeholder="Title"
+    />
+  </div>
+  <div>
+    <label for="travel_description">Describe your trip</label>
+    <textarea name="travel_description" rows="4" cols="50" maxlength="500">
+{{ travel.travel_description if travel.travel_description else '' }}</textarea
+    >
+  </div>
+  <div>
+    <label for="travel_arrival_date">Arrival date*</label>
+    <input
+      name="travel_arrival_date"
+      type="date"
+      value="{{ travel.travel_arrival_date }}"
+    />
+  </div>
+  <div>
+    <label for="travel_departure_date">Departure date*</label>
+    <input
+      name="travel_departure_date"
+      type="date"
+      value="{{ travel.travel_departure_date }}"
+    />
+  </div>
+  <button>Update</button>
+  <a href="/">Go back</a>
+</form>

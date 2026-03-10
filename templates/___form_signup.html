@@ -1,4 +1,4 @@
-<form mix-post="/api-create-user" autocomplete="off">
+<form mix-post="/api-create-user" autocomplete="off" id="signup_form">
   <div>
     <label for=""
       >First name
@@ -12,7 +12,9 @@
       placeholder="First name"
       value=""
       mix-validate="{{x.REGEX_USER_FIRST_NAME}}"
+      id="user_first_name"
     />
+    <ul id="signup_error_first_name" class="signup_errors"></ul>
   </div>
 
   <div>
@@ -28,7 +30,9 @@
       placeholder="Last name"
       value=""
       mix-validate="{{x.REGEX_USER_LAST_NAME}}"
+      id="user_last_name"
     />
+    <ul id="signup_error_last_name" class="signup_errors"></ul>
   </div>
 
   <div>
@@ -39,7 +43,9 @@
       placeholder="Email"
       value=""
       mix-validate="{{x.REGEX_USER_EMAIL}}"
+      id="user_email"
     />
+    <ul id="signup_error_email" class="signup_errors"></ul>
   </div>
 
   <div>
@@ -55,8 +61,10 @@
       placeholder="Password"
       value=""
       mix-validate="{{x.REGEX_USER_PASSWORD}}"
+      id="user_password"
     />
+    <ul id="signup_error_password" class="signup_errors"></ul>
   </div>
-  <button>Signup</button>
+  <button id="button_signup">Signup</button>
   <a href="/login">Go back</a>
 </form>

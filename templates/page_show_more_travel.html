@@ -1,0 +1,28 @@
+{% include "_header.html" %}
+<main class="show_more_page">
+  <a href="/">Go back</a>
+  <div class="travel" id="travel-{{ travel.travel_pk }}">
+    <div>
+      <h2>{{ travel.travel_country }}</h2>
+      <h3>{{ travel.travel_location }}</h3>
+    </div>
+    <div>
+      <h3>{{ travel.travel_title }}</h3>
+      <p>{{ travel.travel_description }}</p>
+    </div>
+    <div>
+      <div>
+        <h4>Arrival date:</h4>
+        <p>{{ travel.travel_arrival_date }}</p>
+      </div>
+      <div>
+        <h4>Departure date:</h4>
+        <p>{{ travel.travel_departure_date }}</p>
+      </div>
+    </div>
+    <div>
+      <a href="/update-travel/{{ travel.travel_pk }}">Edit</a>
+    </div>
+  </div>
+</main>
+{% include "_footer.html" %}

@@ -213,11 +213,14 @@ def show_create_travel():
 def api_create_travel():
     try:
         user = session.get("user", "")
-        travel_location = request.form.get("travel_location", "")
-        travel_title = request.form.get("travel_title", "")
-        travel_description = request.form.get("travel_description", "")
-        travel_arrival_date = request.form.get("travel_arrival_date", "")
-        travel_departure_date = request.form.get("travel_departure_date", "")
+
+        travel_country = request.form.get("travel_country", "")
+        travel_location = x.validate_travel_location()
+        travel_title = x.validate_travel_title()
+        travel_description = request.form.get("travel_description", "").strip()
+        travel_arrival_date, _ = x.validate_travel_dates()
+        travel_departure_date, _ = x.validate_travel_dates()
+
         travel_pk = uuid.uuid4().hex
 
         db, cursor = x.db()
@@ -227,8 +230,8 @@ def api_create_travel():
             ___tip = render_template("___tip.html", status="error", message=error_message)
             return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
 
-        q = "INSERT INTO travel_destinations VALUES (%s, %s, %s, %s, %s, %s, %s)"
-        cursor.execute(q, (travel_pk, travel_location, travel_title, travel_description, travel_arrival_date, travel_departure_date, user["user_pk"]))
+        q = "INSERT INTO travel_destinations VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+        cursor.execute(q, (travel_pk, travel_country, travel_location, travel_title, travel_description, travel_arrival_date, travel_departure_date, user["user_pk"]))
         db.commit()
 
         form_travel = render_template("___form_travel.html", x=x)
@@ -242,18 +245,38 @@ def api_create_travel():
     except Exception as ex:
         ic(ex)
 
-        if not travel_location:
-            error_message = "Please add a location"
+        if not travel_country:
+            error_message = "Please add a country"
             ___tip = render_template("___tip.html", status="error", message=error_message)
             return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
 
-        if not travel_arrival_date:
-            error_message = "Please add the arrival date"
+        if "company_exception travel_location" in str(ex):
+            error_message = f"Travel location {x.TRAVEL_LOCATION_MIN} to {x.TRAVEL_LOCATION_MAX} characters"
             ___tip = render_template("___tip.html", status="error", message=error_message)
             return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
 
-        if not travel_departure_date:
-            error_message = "Please add the departure date"
+        if "company_exception travel_title" in str(ex):
+            error_message = f"Travel title {x.TRAVEL_TITLE_MIN} to {x.TRAVEL_TITLE_MAX} characters"
+            ___tip = render_template("___tip.html", status="error", message=error_message)
+            return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
+
+        if "company_exception travel_description" in str(ex):
+            error_message = f"Travel description {x.TRAVEL_DESCRIPTION_MIN} to {x.TRAVEL_DESCRIPTION_MAX} characters"
+            ___tip = render_template("___tip.html", status="error", message=error_message)
+            return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
+
+        if "company_exception travel_arrival_date" in str(ex):
+            error_message = f"Please add an arrival date"
+            ___tip = render_template("___tip.html", status="error", message=error_message)
+            return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
+
+        if "company_exception travel_departure_date" in str(ex):
+            error_message = f"Please add a departure date"
+            ___tip = render_template("___tip.html", status="error", message=error_message)
+            return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
+            
+        if "company_exception travel_departure_before_arrival" in str(ex):
+            error_message = f"Departure date should be later than arrival date"
             ___tip = render_template("___tip.html", status="error", message=error_message)
             return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
 
@@ -306,12 +329,22 @@ def show_update_travel(travel_pk):
         if "db" in locals(): db.close()
 
 
-############################## UPDATING A USER
+############################## UPDATING A TRAVEL
 @app.patch("/api-update-travel/<travel_pk>")
 def api_update_travel(travel_pk):
     try:
         parts = []
         values = []
+
+        travel_country = request.form.get("travel_country", "").strip()
+        if travel_country:
+            parts.append("travel_country = %s")
+            values.append(travel_country)
+
+        travel_location = request.form.get("travel_location", "").strip()
+        if travel_location:
+            parts.append("travel_location = %s")
+            values.append(travel_location)
 
         travel_title = request.form.get("travel_title", "").strip()
         if travel_title:
@@ -322,11 +355,6 @@ def api_update_travel(travel_pk):
         if travel_description:
             parts.append("travel_description = %s")
             values.append(travel_description)
-
-        travel_location = request.form.get("travel_location", "").strip()
-        if travel_location:
-            parts.append("travel_location = %s")
-            values.append(travel_location)
 
         travel_arrival_date = request.form.get("travel_arrival_date", "").strip()
         if travel_arrival_date:
@@ -361,10 +389,6 @@ def api_update_travel(travel_pk):
         if "cursor" in locals(): cursor.close()
         if "db" in locals(): db.close()
 
-
-############################## UPDATING A USER (DISPLAYING THE USER IN THE #RIGHT COLUMN)
-@app.patch("/users/<user_pk>")
-def update_user(user_pk):
     try:
         parts = []
         values = []
@@ -411,6 +435,24 @@ def update_user(user_pk):
     except Exception as ex:
         print(ex)
         return str(ex), 500
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
+
+
+############################## SHOWING MORE INFORMATION FROM TRAVEL
+@app.get("/show-more-travel/<travel_pk>")
+def show_more_travel(travel_pk):
+    try:
+        user = session.get("user", "")
+        db, cursor = x.db()
+        q = "SELECT * FROM travel_destinations WHERE travel_pk = %s" 
+        cursor.execute(q, (travel_pk,))
+        travel = cursor.fetchone()
+        return render_template("page_show_more_travel.html", user=user, x=x, travel=travel)
+    except Exception as ex:
+        print(ex, flush=True)
+        return "ups", 500
     finally:
         if "cursor" in locals(): cursor.close()
         if "db" in locals(): db.close()

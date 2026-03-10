@@ -1,19 +1,48 @@
 <form mix-post="/api-create-travel" autocomplete="off">
   <div>
-    <label for="travel_location">Where did you travel?*</label>
-    <select name="travel_location">
+    <label for="travel_country">Country*</label>
+    <select name="travel_country">
       {% for country in x.COUNTRIES %}
       <option value="{{ country }}">{{ country }}</option>
       {% endfor %}
     </select>
   </div>
   <div>
-    <label for="travel_title">Give your trip a title</label>
-    <input name="travel_title" type="text" placeholder="Title" />
+    <label for="travel_location"
+      >Location*
+      <span
+        >{{x.TRAVEL_LOCATION_MIN}} to {{x.TRAVEL_LOCATION_MAX}} characters</span
+      ></label
+    >
+    <input
+      name="travel_location"
+      type="text"
+      placeholder="Location"
+      mix-validate="{{x.REGEX_TRAVEL_LOCATION}}"
+    />
   </div>
   <div>
-    <label for="travel_description">Describe your trip</label>
-    <input name="travel_description" type="text" placeholder="Description" />
+    <label for="travel_title"
+      >Give your trip a title*
+      <span
+        >{{x.TRAVEL_TITLE_MIN}} to {{x.TRAVEL_TITLE_MAX}} characters</span
+      ></label
+    >
+    <input
+      name="travel_title"
+      type="text"
+      placeholder="Title"
+      mix-validate="{{x.REGEX_TRAVEL_TITLE}}"
+    />
+  </div>
+  <div>
+    <label for="travel_description">Describe your trip </label>
+    <textarea
+      name="travel_description"
+      rows="4"
+      cols="50"
+      maxlength="500"
+    ></textarea>
   </div>
   <div>
     <label for="travel_arrival_date">Arrival date*</label>

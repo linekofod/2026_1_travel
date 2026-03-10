@@ -1,0 +1,41 @@
+{% for travel in travels %}
+<div class="travel_card" id="travel-{{ travel.travel_pk }}">
+  <div class="delete_container">
+    <button
+      class="delete_button"
+      mix-delete="/api-delete-travel/{{ travel.travel_pk }}"
+    >
+      <i class="fa fa-trash" style="pointer-events: none"></i>
+    </button>
+    <!-- <div id="confirm_box" class="hidden">
+      <p>Are you sure you want to delete the travel?</p>
+      <a href="/">Cancel</a>
+      <button mix-delete="/api-delete-travel/{{ travel.travel_pk }}">
+        Yes, delete
+      </button>
+    </div> -->
+  </div>
+  <div>
+    <h2>{{ travel.travel_country }}</h2>
+    <h3>{{ travel.travel_location }}</h3>
+  </div>
+  <div>
+    <h3 class="truncate">{{ travel.travel_title }}</h3>
+    <p class="truncate">{{ travel.travel_description }}</p>
+  </div>
+  <div>
+    <div>
+      <h4>Arrival date:</h4>
+      <p>{{ travel.travel_arrival_date }}</p>
+    </div>
+    <div>
+      <h4>Departure date:</h4>
+      <p>{{ travel.travel_departure_date }}</p>
+    </div>
+  </div>
+  <div>
+    <a href="/show-more-travel/{{ travel.travel_pk }}">Show more</a>
+    <a href="/update-travel/{{ travel.travel_pk }}">Edit</a>
+  </div>
+</div>
+{% endfor %}
