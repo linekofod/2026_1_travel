@@ -1,7 +1,7 @@
-<form mix-post="/api-create-user" autocomplete="off" id="signup_form">
+<form mix-post="/api-create-user" autocomplete="off" id="form_signup">
   <div>
     <label for=""
-      >First name
+      >First name*
       <span
         >{{x.USER_FIRST_NAME_MIN}} to {{x.USER_FIRST_NAME_MAX}} characters</span
       ></label
@@ -14,12 +14,12 @@
       mix-validate="{{x.REGEX_USER_FIRST_NAME}}"
       id="user_first_name"
     />
-    <ul id="signup_error_first_name" class="signup_errors"></ul>
+    <ul id="error_first_name" class="form_error_message"></ul>
   </div>
 
   <div>
     <label for=""
-      >Last name
+      >Last name*
       <span
         >{{x.USER_LAST_NAME_MIN}} to {{x.USER_LAST_NAME_MAX}} characters</span
       ></label
@@ -32,11 +32,11 @@
       mix-validate="{{x.REGEX_USER_LAST_NAME}}"
       id="user_last_name"
     />
-    <ul id="signup_error_last_name" class="signup_errors"></ul>
+    <ul id="error_last_name" class="form_error_message"></ul>
   </div>
 
   <div>
-    <label for="">Email <span></span></label>
+    <label for="">Email* <span></span></label>
     <input
       name="user_email"
       type="text"
@@ -45,12 +45,12 @@
       mix-validate="{{x.REGEX_USER_EMAIL}}"
       id="user_email"
     />
-    <ul id="signup_error_email" class="signup_errors"></ul>
+    <ul id="error_email" class="form_error_message"></ul>
   </div>
 
   <div>
     <label for=""
-      >Password
+      >Password*
       <span
         >{{x.USER_PASSWORD_MIN}} to {{x.USER_PASSWORD_MAX}} characters</span
       ></label
@@ -63,7 +63,7 @@
       mix-validate="{{x.REGEX_USER_PASSWORD}}"
       id="user_password"
     />
-    <ul id="signup_error_password" class="signup_errors"></ul>
+    <ul id="error_password" class="form_error_message"></ul>
   </div>
   <button id="button_signup">Signup</button>
   <a href="/login">Go back</a>

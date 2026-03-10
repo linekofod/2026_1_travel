@@ -2,36 +2,7 @@
 <main class="form_page">
   <h1>Welcome to Travel Destinations!</h1>
   <h2>Login</h2>
-  <form mix-post="/api-login" autocomplete="off">
-    <div>
-      <label for="">Email <span></span></label>
-      <input
-        name="user_email"
-        type="text"
-        placeholder="Email"
-        value=""
-        mix-validate="{{x.REGEX_USER_EMAIL}}"
-      />
-    </div>
-
-    <div>
-      <label for=""
-        >Password
-        <span
-          >{{x.USER_PASSWORD_MIN}} to {{x.USER_PASSWORD_MAX}} characters</span
-        ></label
-      >
-      <input
-        name="user_password"
-        type="password"
-        placeholder="Password"
-        value=""
-        mix-validate="{{x.REGEX_USER_PASSWORD}}"
-      />
-    </div>
-    <button>Login</button>
-    <p>Not a user? <a href="/signup">Sign up here</a></p>
-  </form>
+  {% include "___form_login.html" %}
 </main>
 
 {% include "_footer.html" %}

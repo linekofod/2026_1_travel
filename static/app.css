@@ -6,11 +6,10 @@
 
 body {
     width: 100%;
-    height: 100vh;
 }
 
 main {
-    margin: 1rem;
+    margin: 1.5rem;
 }
 
 #tooltip {
@@ -66,8 +65,15 @@ h2 {
 
 button {
     width: fit-content;
-    padding: .3rem .5rem;
+    padding: 0.5rem 0.8rem;
     cursor: pointer;
+    background: rgb(0, 0, 0);
+    color: white;
+    border: 1px solid black;
+}
+
+button:hover {
+    background-color: rgb(0, 0, 0, .8);
 }
 
 form {
@@ -97,20 +103,57 @@ form {
         flex-direction: column;
         gap: .2rem;
     }
+
+    textarea {
+        font-family: inherit;
+        font-size: inherit;
+    }
+}
+
+.form_error_message {
+    margin: .3rem 0 0 1rem;
+
+    li {
+        font-size: 14px;
+    }
 }
 
 .form_page {
     max-width: 400px;
-    margin: 5rem auto;
+    margin: 3rem auto;
+}
+
+.show_more_page {
+    .travel {
+        margin-top: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+
+        div {
+            display: flex;
+            flex-direction: column;
+            gap: .4rem;
+
+            h2 {
+                margin-bottom: 0;
+            }
+
+            p {
+                max-width: 60ch;
+                word-break: break-all;
+            }
+        }
+    }
 }
 
 .travel_destinations {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1rem;
     position: relative;
 
-    .travel {
+    .travel_card {
         position: relative;
         border: 1px solid black;
         padding: 1rem;
@@ -123,6 +166,10 @@ form {
             display: flex;
             flex-direction: column;
             gap: .4rem;
+
+            h2 {
+                margin-bottom: 0;
+            }
         }
     }
 }
@@ -153,16 +200,23 @@ form {
 }
 
 .hidden {
-    display: none;
+    display: none !important; 
 }
 
 .column_gap {
     display: flex;
-    flex-direction: column;
+    flex-direction: column !important;
     gap: .6rem;
 }
 
-footer {
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 30ch;
+}
+
+/* footer {
     position: fixed;
     bottom: 0;
     left: 0;
@@ -170,6 +224,6 @@ footer {
     padding: 1rem;
     background-color: beige;
     text-align: right;
-}
+} */
 
 

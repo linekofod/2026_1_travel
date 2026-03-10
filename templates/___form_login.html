@@ -1,0 +1,34 @@
+<form mix-post="/api-login" autocomplete="off" id="form_login">
+  <div>
+    <label for="">Email <span></span></label>
+    <input
+      name="user_email"
+      type="text"
+      placeholder="Email"
+      value=""
+      mix-validate="{{x.REGEX_USER_EMAIL}}"
+      id="user_email"
+    />
+    <ul id="error_email" class="form_error_message"></ul>
+  </div>
+
+  <div>
+    <label for=""
+      >Password
+      <span
+        >{{x.USER_PASSWORD_MIN}} to {{x.USER_PASSWORD_MAX}} characters</span
+      ></label
+    >
+    <input
+      name="user_password"
+      type="password"
+      placeholder="Password"
+      value=""
+      mix-validate="{{x.REGEX_USER_PASSWORD}}"
+      id="user_password"
+    />
+    <ul id="error_password" class="form_error_message"></ul>
+  </div>
+  <button>Login</button>
+  <p>Not a user? <a href="/signup">Sign up here</a></p>
+</form>

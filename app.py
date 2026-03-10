@@ -245,11 +245,6 @@ def api_create_travel():
     except Exception as ex:
         ic(ex)
 
-        if not travel_country:
-            error_message = "Please add a country"
-            ___tip = render_template("___tip.html", status="error", message=error_message)
-            return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
-
         if "company_exception travel_location" in str(ex):
             error_message = f"Travel location {x.TRAVEL_LOCATION_MIN} to {x.TRAVEL_LOCATION_MAX} characters"
             ___tip = render_template("___tip.html", status="error", message=error_message)
@@ -260,23 +255,18 @@ def api_create_travel():
             ___tip = render_template("___tip.html", status="error", message=error_message)
             return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
 
-        if "company_exception travel_description" in str(ex):
-            error_message = f"Travel description {x.TRAVEL_DESCRIPTION_MIN} to {x.TRAVEL_DESCRIPTION_MAX} characters"
-            ___tip = render_template("___tip.html", status="error", message=error_message)
-            return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
-
         if "company_exception travel_arrival_date" in str(ex):
-            error_message = f"Please add an arrival date"
+            error_message = "Please add an arrival date"
             ___tip = render_template("___tip.html", status="error", message=error_message)
             return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
 
         if "company_exception travel_departure_date" in str(ex):
-            error_message = f"Please add a departure date"
+            error_message = "Please add a departure date"
             ___tip = render_template("___tip.html", status="error", message=error_message)
             return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
             
         if "company_exception travel_departure_before_arrival" in str(ex):
-            error_message = f"Departure date should be later than arrival date"
+            error_message = "Departure date should be later than arrival date"
             ___tip = render_template("___tip.html", status="error", message=error_message)
             return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
 

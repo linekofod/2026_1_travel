@@ -38,7 +38,8 @@ def no_cache(view):
 ############################## VALIDATING USER FIRST NAME
 USER_FIRST_NAME_MIN = 2
 USER_FIRST_NAME_MAX = 20
-REGEX_USER_FIRST_NAME = f"^.{{{USER_FIRST_NAME_MIN},{USER_FIRST_NAME_MAX}}}$"
+# Regex says: Must be between 2 and 20 characters and can only contain letters, spaces, apostrophes and hyphens.
+REGEX_USER_FIRST_NAME = f"^[a-zA-ZÀ-ÖØ-öø-ÿ\\s'\\-]{{{USER_FIRST_NAME_MIN},{USER_FIRST_NAME_MAX}}}$"
 def validate_user_first_name():
     user_first_name = request.form.get("user_first_name", "").strip()
     if not re.match(REGEX_USER_FIRST_NAME, user_first_name):
@@ -48,7 +49,7 @@ def validate_user_first_name():
 ############################## VALIDATING USER LAST NAME
 USER_LAST_NAME_MIN = 2
 USER_LAST_NAME_MAX = 20
-REGEX_USER_LAST_NAME = f"^.{{{USER_LAST_NAME_MIN},{USER_LAST_NAME_MAX}}}$"
+REGEX_USER_LAST_NAME = f"^[a-zA-ZÀ-ÖØ-öø-ÿ\\s'\\-]{{{USER_LAST_NAME_MIN},{USER_LAST_NAME_MAX}}}$"
 def validate_user_last_name():
     user_last_name = request.form.get("user_last_name", "").strip()
     if not re.match(REGEX_USER_LAST_NAME, user_last_name):
