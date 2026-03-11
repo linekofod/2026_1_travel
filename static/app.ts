@@ -53,3 +53,38 @@ if (travelForm) {
   document.getElementById("travel_departure_date")?.addEventListener("input", () => { document.getElementById("error_travel_departure_date").textContent = ""; });
 };
 
+
+// CONFIRM DELETE BOX
+document.addEventListener("DOMContentLoaded", () => {
+  const overlay = document.getElementById("overlay");
+
+  // SHOW confirm box when delete icon is clicked
+  document.querySelectorAll(".delete_icon").forEach((deleteBtn) => { // Finds every element with the class delete_icon on the page and loops through each deleteButton.
+    deleteBtn.addEventListener("click", () => { // Listen for a click on deleteBtn
+      const travelCard = deleteBtn.closest(".travel_card"); // Finds a parent with the class travel_card with .closest()
+      const confirmBox = travelCard?.querySelector(".confirm_delete_box"); // Finds the confirm_delete_box with querySelector() inside the travelCard (? = only do this if it exists).
+      confirmBox?.classList.remove("hidden"); // Removes the hidden class from the confirmBox to make it visible
+      overlay?.classList.remove("hidden"); // Adds an overlay to the background of the page
+    });
+  });
+
+  // CANCEL - hide the confirm box
+  document.querySelectorAll(".cancel_button").forEach((cancelBtn) => {
+    cancelBtn.addEventListener("click", () => {
+      const confirmBox = cancelBtn.closest(".confirm_delete_box");
+      confirmBox?.classList.add("hidden");
+      overlay?.classList.add("hidden");
+    });
+  });
+
+  // Remove the overlay when deleting a travel
+  document.querySelectorAll(".confirm_delete_button").forEach((confirmBtn) => {
+    confirmBtn.addEventListener("click", () => {
+      const travelCard = confirmBtn.closest(".travel_card");
+      overlay?.classList.add("hidden");
+    });
+  });
+});
+
+
+

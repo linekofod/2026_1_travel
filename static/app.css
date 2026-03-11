@@ -182,7 +182,7 @@ form {
     right: 1rem;
     text-align: right;
 
-    .delete_button {
+    .delete_icon {
         width: 15px;
         height: 15px;
         background: none;
@@ -193,11 +193,44 @@ form {
         cursor: pointer;
         outline: inherit;
     }
+}
 
-    .delete_message {
-        color: rgb(150, 150, 150);
-        font-size: 11px;
+.confirm_delete_box {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 30%;
+    z-index: 99;
+    background-color: white;
+    padding: 3rem;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: max-content;
+
+    .confirm_delete_buttons {
+        margin-top: 1.2rem;
+        display: flex !important;
+        flex-direction: row !important;
+        gap: .5rem;
+        justify-content: center;
     }
+
+    .cancel_button {
+        background-color: white;
+        color: black;
+    }
+
+    .confirm_delete_button {
+        background-color: red;
+        border: 1px solid red;
+    }
+}
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99;
 }
 
 .hidden {
@@ -214,7 +247,7 @@ form {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 30ch;
+  width: 35ch;
 }
 
 /* footer {

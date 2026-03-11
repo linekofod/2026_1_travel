@@ -45,4 +45,32 @@ if (travelForm) {
     (_k = document.getElementById("travel_departure_date")) === null || _k === void 0 ? void 0 : _k.addEventListener("input", () => { document.getElementById("error_travel_departure_date").textContent = ""; });
 }
 ;
+// CONFIRM DELETE BOX
+document.addEventListener("DOMContentLoaded", () => {
+    const overlay = document.getElementById("overlay");
+    // SHOW confirm box when delete icon is clicked
+    document.querySelectorAll(".delete_icon").forEach((deleteBtn) => {
+        deleteBtn.addEventListener("click", () => {
+            const travelCard = deleteBtn.closest(".travel_card"); // Finds a parent with the class travel_card with .closest()
+            const confirmBox = travelCard === null || travelCard === void 0 ? void 0 : travelCard.querySelector(".confirm_delete_box"); // Finds the confirm_delete_box with querySelector() inside the travelCard (? = only do this if it exists).
+            confirmBox === null || confirmBox === void 0 ? void 0 : confirmBox.classList.remove("hidden"); // Removes the hidden class from the confirmBox to make it visible
+            overlay === null || overlay === void 0 ? void 0 : overlay.classList.remove("hidden"); // Adds an overlay to the background of the page
+        });
+    });
+    // CANCEL - hide the confirm box
+    document.querySelectorAll(".cancel_button").forEach((cancelBtn) => {
+        cancelBtn.addEventListener("click", () => {
+            const confirmBox = cancelBtn.closest(".confirm_delete_box");
+            confirmBox === null || confirmBox === void 0 ? void 0 : confirmBox.classList.add("hidden");
+            overlay === null || overlay === void 0 ? void 0 : overlay.classList.add("hidden");
+        });
+    });
+    // Remove the overlay when deleting a travel
+    document.querySelectorAll(".confirm_delete_button").forEach((confirmBtn) => {
+        confirmBtn.addEventListener("click", () => {
+            const travelCard = confirmBtn.closest(".travel_card");
+            overlay === null || overlay === void 0 ? void 0 : overlay.classList.add("hidden");
+        });
+    });
+});
 //# sourceMappingURL=app.js.map

@@ -28,7 +28,7 @@ def show_index():
         # If logged-in user exists in the session
         # It runs the database query to fetch all travel destinations belonging to that user, and stores the results in travels.
         else: 
-            q = "SELECT * FROM travel_destinations WHERE user_fk = %s"
+            q = "SELECT * FROM travel_destinations WHERE user_fk = %s ORDER BY travel_created_at DESC"
             cursor.execute(q, (user["user_pk"],))
             travels = cursor.fetchall()
 
@@ -221,19 +221,19 @@ def api_create_travel():
         travel_arrival_date, travel_departure_date = x.validate_travel_dates()
 
         travel_pk = uuid.uuid4().hex
+        travel_created_at = int(time.time())
 
         db, cursor = x.db()
 
-        q = "INSERT INTO travel_destinations VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-        cursor.execute(q, (travel_pk, travel_country, travel_location, travel_title, travel_description, travel_arrival_date, travel_departure_date, user["user_pk"]))
+        q = "INSERT INTO travel_destinations VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        cursor.execute(q, (travel_pk, travel_country, travel_location, travel_title, travel_description, travel_arrival_date, travel_departure_date, user["user_pk"], travel_created_at))
         db.commit()
 
-        form_travel = render_template("___form_travel.html", x=x)
+        form_create_travel = render_template("___form_create_travel.html", x=x)
 
         return f"""
-        <browser mix-replace="form">{form_travel}</browser>
+        <browser mix-replace="form">{form_create_travel}</browser>
         <browser mix-redirect="/"></browser>
-        <browser mix-before-begin="#travel"></browser>
         """
 
     except Exception as ex:
@@ -384,7 +384,7 @@ def api_delete_travel(travel_pk):
         cursor.execute(q, (travel_pk,))
         db.commit()
         return f"""
-            <browser mix-remove="#travel-{travel_pk}" mix-fade-2000>
+            <browser mix-remove="#travel-{travel_pk}">
             </browser>
         """
     except Exception as ex:
