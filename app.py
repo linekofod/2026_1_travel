@@ -41,6 +41,7 @@ def show_index():
         if "cursor" in locals(): cursor.close()
         if "db" in locals(): db.close()
 
+
 ############################## SHOW SIGNUP PAGE
 @app.get("/signup")
 @x.no_cache
@@ -66,14 +67,14 @@ def api_create_user():
         # ic(user_hashed_password) # the hashed password in the terminal: 'scrypt:32768:8:1$laHJGKP9gkvUGTKY$4681b30032148b07b0905c803595df806662cce02a2503a8ed1247665cd42e4db163fad94f7c6e38e4e84462901e6f712673b2de6d15f3a39d2072584f31b4d5'
 
         user_pk = uuid.uuid4().hex # Generates a unique id with uuid
-        user_created_at = int(time.time()) # Gets the current time and converts it to an integer.
+        user_created_at = int(time.time()) # Gets the current time and converts it to an integer (EPOCH)
 
         db, cursor = x.db() # Connects to the database
         q = "INSERT INTO users VALUES (%s, %s, %s, %s, %s, %s);" # Creates a query
         cursor.execute(q, (user_pk, user_first_name, user_last_name, user_email, user_hashed_password, user_created_at)) # Executes the query
         db.commit() # Saves (commit) the changes to the database
 
-        form_signup = render_template("___form_signup.html", x=x)
+        form_signup = render_template("___form_signup.html", x=x) # Render the form_signup
 
         # Replaces the form on the page with the form_signup component (empty form), then redirect to the login page.
         return f"""
@@ -160,7 +161,7 @@ def api_login():
         user.pop("user_password") # Removes the password from showing in the session
         session["user"] = user # Saves the user to the session
 
-        return f"""<browser mix-redirect="/"></browser>""" # Redirects to the index page
+        return f"""<browser mix-redirect="/"></browser>""" # Redirects to the index page if the user is succesfully logged in
 
     except Exception as ex:
         ic(ex)
@@ -195,7 +196,6 @@ def logout():
         return "ups"
 
 
-
 ############################## SHOW CREATE TRAVEL PAGE
 @app.get("/create-travel")
 @x.no_cache
@@ -218,17 +218,11 @@ def api_create_travel():
         travel_location = x.validate_travel_location()
         travel_title = x.validate_travel_title()
         travel_description = request.form.get("travel_description", "").strip()
-        travel_arrival_date, _ = x.validate_travel_dates()
-        travel_departure_date, _ = x.validate_travel_dates()
+        travel_arrival_date, travel_departure_date = x.validate_travel_dates()
 
         travel_pk = uuid.uuid4().hex
 
         db, cursor = x.db()
-
-        if not user:
-            error_message = "Please login"
-            ___tip = render_template("___tip.html", status="error", message=error_message)
-            return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
 
         q = "INSERT INTO travel_destinations VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
         cursor.execute(q, (travel_pk, travel_country, travel_location, travel_title, travel_description, travel_arrival_date, travel_departure_date, user["user_pk"]))
@@ -239,8 +233,8 @@ def api_create_travel():
         return f"""
         <browser mix-replace="form">{form_travel}</browser>
         <browser mix-redirect="/"></browser>
+        <browser mix-before-begin="#travel"></browser>
         """
-
 
     except Exception as ex:
         ic(ex)
@@ -280,26 +274,6 @@ def api_create_travel():
         if "db" in locals(): db.close()
 
 
-############################## DELETING A TRAVEL DESTINATION
-@app.delete("/api-delete-travel/<travel_pk>")
-def api_delete_travel(travel_pk):
-    try:
-        db, cursor = x.db()
-        q = "DELETE FROM travel_destinations WHERE travel_pk = %s"
-        cursor.execute(q, (travel_pk,))
-        db.commit()
-        return f"""
-            <browser mix-remove="#travel-{travel_pk}" mix-fade-2000>
-            </browser>
-        """
-    except Exception as ex:
-        ic(ex)
-        return str(ex)
-    finally:
-        if "cursor" in locals(): cursor.close()
-        if "db" in locals(): db.close()
-
-
 ############################## SHOW UPDATE TRAVEL PAGE
 @app.get("/update-travel/<travel_pk>")
 @x.no_cache
@@ -323,20 +297,22 @@ def show_update_travel(travel_pk):
 @app.patch("/api-update-travel/<travel_pk>")
 def api_update_travel(travel_pk):
     try:
-        parts = []
-        values = []
+        parts = [] # Stores "field = %s" strings
+        values = [] # Stores the actual values
 
+        # For each field, we check if the user filled it in. 
+        # If the field has a value it gets updated, otherwise it gets skipped entirely
         travel_country = request.form.get("travel_country", "").strip()
         if travel_country:
             parts.append("travel_country = %s")
             values.append(travel_country)
 
-        travel_location = request.form.get("travel_location", "").strip()
+        travel_location = x.validate_travel_location()
         if travel_location:
             parts.append("travel_location = %s")
             values.append(travel_location)
 
-        travel_title = request.form.get("travel_title", "").strip()
+        travel_title = x.travel_title()
         if travel_title:
             parts.append("travel_title = %s")
             values.append(travel_title)
@@ -346,24 +322,24 @@ def api_update_travel(travel_pk):
             parts.append("travel_description = %s")
             values.append(travel_description)
 
-        travel_arrival_date = request.form.get("travel_arrival_date", "").strip()
+        travel_arrival_date, travel_departure_date = x.validate_travel_dates()
         if travel_arrival_date:
             parts.append("travel_arrival_date = %s")
             values.append(travel_arrival_date)
-
-        travel_departure_date = request.form.get("travel_departure_date", "").strip()
         if travel_departure_date:
             parts.append("travel_departure_date = %s")
             values.append(travel_departure_date)
 
+        # If no fields were provided at all, return a 400 error instead of running an empty query.
         if not parts: return "nothing to update", 400
 
-        values.append(travel_pk)
+        values.append(travel_pk) # Add the travel_pk to values
 
-        partial_query = ", ".join(parts)
+        partial_query = ", ".join(parts) # Join the parts list into a string
 
-        q = f"UPDATE travel_destinations SET {partial_query} WHERE travel_pk = %s"
+        q = f"UPDATE travel_destinations SET {partial_query} WHERE travel_pk = %s" # Creates the query
 
+        # Connects to the database and executes the query with the new values
         db, cursor = x.db()
         cursor.execute(q, values)
         db.commit()
@@ -375,56 +351,7 @@ def api_update_travel(travel_pk):
     except Exception as ex:
         print(ex)
         return str(ex), 500
-    finally:
-        if "cursor" in locals(): cursor.close()
-        if "db" in locals(): db.close()
 
-    try:
-        parts = []
-        values = []
-
-        # Validate user_name
-        user_name = request.form.get("user_name", "") # If the username is not being passed, it returns nothing
-        user_name = user_name.strip()
-        
-        if user_name:
-            parts.append("user_name = %s")
-            values.append(user_name)
-
-        # Validate user_last_name
-        user_last_name = request.form.get("user_last_name", "")
-        user_last_name = user_last_name.strip()
-       
-        if user_last_name:
-            parts.append("user_last_name = %s")
-            values.append(user_last_name)
-        
-        if not user_name and not user_last_name: return "nothing to update", 400
-        
-        # Convert the list to a string with a comma in between
-        partial_query = ",".join(parts)
-
-        values.append(user_pk)
-
-        print(parts, flush=True)
-        print(values, flush=True)
-        print(partial_query, flush=True)
-
-        q = f"""
-            UPDATE users
-            SET {partial_query}
-            WHERE user_pk = %s
-        """
-
-        print(q, flush=True)
-
-        db, cursor = x.db()
-        cursor.execute(q, values)
-        db.commit()
-
-    except Exception as ex:
-        print(ex)
-        return str(ex), 500
     finally:
         if "cursor" in locals(): cursor.close()
         if "db" in locals(): db.close()
@@ -443,6 +370,26 @@ def show_more_travel(travel_pk):
     except Exception as ex:
         print(ex, flush=True)
         return "ups", 500
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
+
+
+############################## DELETING A TRAVEL
+@app.delete("/api-delete-travel/<travel_pk>")
+def api_delete_travel(travel_pk):
+    try:
+        db, cursor = x.db()
+        q = "DELETE FROM travel_destinations WHERE travel_pk = %s"
+        cursor.execute(q, (travel_pk,))
+        db.commit()
+        return f"""
+            <browser mix-remove="#travel-{travel_pk}" mix-fade-2000>
+            </browser>
+        """
+    except Exception as ex:
+        ic(ex)
+        return str(ex)
     finally:
         if "cursor" in locals(): cursor.close()
         if "db" in locals(): db.close()
