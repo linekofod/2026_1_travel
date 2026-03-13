@@ -312,7 +312,7 @@ def api_update_travel(travel_pk):
             parts.append("travel_location = %s")
             values.append(travel_location)
 
-        travel_title = x.travel_title()
+        travel_title = x.validate_travel_title()
         if travel_title:
             parts.append("travel_title = %s")
             values.append(travel_title)

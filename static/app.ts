@@ -12,6 +12,7 @@ if (signupForm) {
   validateEmail((document.getElementById("user_email") as HTMLInputElement).value, "error_email");
   validatePassword((document.getElementById("user_password") as HTMLInputElement).value, "error_password", 8, 50);
 })
+
   // Input event listeners for each field that clear the error when the user types
   document.getElementById("user_first_name")?.addEventListener("input", () => { document.getElementById("error_first_name").textContent = ""; });
   document.getElementById("user_last_name")?.addEventListener("input", () => { document.getElementById("error_last_name").textContent = ""; });

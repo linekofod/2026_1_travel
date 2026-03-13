@@ -6,6 +6,7 @@
 
 body {
     width: 100%;
+    margin-bottom: 5rem;
 }
 
 main {
@@ -250,7 +251,7 @@ form {
   width: 35ch;
 }
 
-/* footer {
+footer {
     position: fixed;
     bottom: 0;
     left: 0;
@@ -258,6 +259,7 @@ form {
     padding: 1rem;
     background-color: beige;
     text-align: right;
-} */
+    margin-top: 3rem;
+}
 
 
